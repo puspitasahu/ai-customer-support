@@ -27,25 +27,6 @@ public class ChatController {
     public ResponseEntity<String> handleCharMessage(@RequestBody ChatMessageDto message){
         String response = conversationService.handleMessage(message);
         log.info("The response from controller {}",response);
-        return ResponseEntity.ok(response);
-    }
-   /* @PostMapping
-    public Mono<String> handleChatMessage(@RequestBody ChatMessageDto message) {
-        return conversationService.handleMessage(message)
-                .doOnNext(resp -> log.info("The response from controller {}", resp));
-    }*/
-   /* @GetMapping
-    public String chat(@RequestParam String message){
-        List<Message> messages= new ArrayList<>();
-        String systemPrompt= "You are a helpful agent.You goal is listen to the User questions and provide them response";
-        messages.add(new SystemMessage(systemPrompt));
-        messages.add(new UserMessage(message));
+        return ResponseEntity.ok(response);    }
 
-        ChatClient.CallResponseSpec responseSpec= chatClient
-                .prompt()
-                .messages(messages)
-                .call();
-
-        return responseSpec.content();
-    }*/
 }

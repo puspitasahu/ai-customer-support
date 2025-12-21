@@ -11,17 +11,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LLMConfig {
 
-    @Bean
-    public ChatClient chatClient(ChatClient.Builder builder) {
-        return builder
-                .defaultOptions(ChatOptions.builder()
-                        // ✅ Disable any caching
-                        .temperature(0.7)  // Add some randomness
-                        .build())
-                .build();
+
+    public ChatClient chatClient(ChatClient.Builder chatClientBuilder){
+        return chatClientBuilder.build();
     }
 
-  //  @Bean
+   @Bean
     public ChatClient chatClient(){
 
         OpenAiApi openAiApi = OpenAiApi.builder()

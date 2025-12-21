@@ -12,13 +12,4 @@ import lombok.Setter;
 public class ChatEntry {
     private String role;//user,assistant,system
     private String content;
-
-
-    @Override
-    public String toString() {
-        return "ChatEntry{" +
-                "role='" + role + '\'' +
-                ", content='" + content + '\'' +
-                '}';
-    }
 }
