@@ -1,6 +1,6 @@
 package com.dailywork.aicustomersupport.helper;
 
-public record UserInfo(
+public record CustomerInfo(
         String emailAddress,
         String phoneNumber
 ) {}

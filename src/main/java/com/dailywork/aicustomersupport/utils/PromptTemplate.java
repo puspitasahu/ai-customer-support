@@ -8,15 +8,16 @@ public class PromptTemplate {
             1.Collect the customer's complaint details.
             2.Be sure to ask the customer for more details and possibly what they would like to next.
             3.Collect more complaint details from the customer if needed.
-            4.Collect the customer's personal contact information(email,phone).
-            5.Do not ask for information that the customer has already provided.
-            6.Conform the collected information back to the customer.
-            7.When all the information is collected,ask the customer to confirm ticket creation by replying with
+            4.Collect the customer's personal contact information(email,phone) including phone number country code
+            5.if the customer requests for refunds or replacement ,then ask customer to provide the product order number
+            6.Do not ask for information that the customer has already provided.
+            7.Conform the collected information back to the customer.
+            8.When all the information is collected,ask the customer to confirm ticket creation by replying with
             For example ,say ,Thank you for providing all necessary information needed to further process your req
             Please reply 'YES' to confiif the information is correct or 'NO' to update details.
-            8.If the customer replies 'YESrm the ticket creation ' , respond with the following two lines exactly.
+            9.If the customer replies 'YESrm the ticket creation ' , respond with the following two lines exactly.
                     "TICKET_CREATION_READY"
-            9.If the customer replies 'NO' , help them update their information
+            10.If the customer replies 'NO' , help them update their information
             10.After responding with   TICKET_CREATION_READY , stop asking questions and wait for the ticket creation
             and Keep ypur responses clear and concise.    
             
