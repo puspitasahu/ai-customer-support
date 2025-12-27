@@ -22,7 +22,7 @@ public class AISupportService {
     private final  ChatClient chatClient;
     public Mono<String> chatWithHistory(List<ChatEntry>history){
         List<Message> messages= new ArrayList<>();
-        messages.add(new SystemMessage(PromptTemplate.SUPPORT_PROMPT_TEMPLATE));
+        messages.add(new SystemMessage(PromptTemplate.SUPPORT_PROMPT));
         for(ChatEntry entry:history){
             String content= entry.getContent();
             String role = entry.getRole();
@@ -47,7 +47,7 @@ public class AISupportService {
 
     public Mono<String> generateUserConfirmationMessage(){
         List<Message> messages= new ArrayList<>();
-        messages.add(new SystemMessage(PromptTemplate.USER_CONFIRMATION_PROMPT_TEMPLATE));
+        messages.add(new SystemMessage(PromptTemplate.USER_CONFIRMATION_PROMPT));
         return Mono.fromCallable(()->{
             ChatClient.CallResponseSpec responseSpec = chatClient.prompt()
                     .messages(messages)
@@ -80,8 +80,23 @@ public class AISupportService {
 
     public Mono<String> conversationTitle(String summarizeConversation){
         List<Message> messages= new ArrayList<>();
-        messages.add(new SystemMessage(PromptTemplate.TITLE_GENERATION_PROMPT_TEMPLATE));
+        messages.add(new SystemMessage(PromptTemplate.TITLE_GENERATION_PROMPT));
         messages.add(new UserMessage(summarizeConversation));
+        return Mono.fromCallable(()->{
+            ChatClient.CallResponseSpec responseSpec = chatClient.prompt()
+                    .messages(messages)
+                    .call();
+            String content = responseSpec.content();
+            if(content == null){
+                throw new IllegalStateException("AI response content is null");
+            }
+            return content;
+        }).subscribeOn(Schedulers.boundedElastic());
+
+    }
+    public Mono<String> generateEmailNotificationMessage(){
+        List<Message> messages= new ArrayList<>();
+        messages.add(new SystemMessage(PromptTemplate.EMAIL_NOTIFICATION_PROMPT));
         return Mono.fromCallable(()->{
             ChatClient.CallResponseSpec responseSpec = chatClient.prompt()
                     .messages(messages)

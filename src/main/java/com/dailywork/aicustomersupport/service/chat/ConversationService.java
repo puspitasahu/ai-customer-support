@@ -60,8 +60,16 @@ public class ConversationService implements IConversationService {
                             history.add(new ChatEntry("system","The email has been sent to user"));
                         }
                         //Ask AI to generate report and send email to customer
+                        String feedbackMessage = aiSupportService.generateEmailNotificationMessage().block();
+                        if(feedbackMessage !=null){
+                            List<ChatEntry> currentHistory = activeConversation.get(sessionId);
+                            if(currentHistory == null){
+                                currentHistory.add(new ChatEntry("assistant",feedbackMessage));
+                            }
+                            webSocketMessageSender.sendMessageToUser(sessionId,feedbackMessage);
+                        }
                     }catch(Exception e){
-
+                        //log any error
                     }
 
                 });

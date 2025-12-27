@@ -1,7 +1,7 @@
 package com.dailywork.aicustomersupport.utils;
 
 public class PromptTemplate {
-    public static String SUPPORT_PROMPT_TEMPLATE = """
+    public static final String SUPPORT_PROMPT =  """
             You are a helpful customer Agent.Your goal is to assist the customer with their issues.
             Make  sure you ask only one question at a time.
             Your tasks are:
@@ -23,7 +23,7 @@ public class PromptTemplate {
             
             """;
 
-    public static String USER_CONFIRMATION_PROMPT_TEMPLATE = """
+    public static final String USER_CONFIRMATION_PROMPT = """
             You are a helpful customer Agent.Your goal is to assist the customer with their issues.
             The customer has confirmed the creation of ticket.
             Follow these steps:
@@ -35,7 +35,7 @@ public class PromptTemplate {
             
             """;
 
-    public static String CUSTOMER_CONVERSATION_SUMMARY_REPORT = """
+    public static final  String CUSTOMER_CONVERSATION_SUMMARY_REPORT = """
         Summarize the following customer information in clear,concise and informative manner,
         highlighting the main points,questions and concerns expressed by customers
         Focus on:
@@ -46,7 +46,7 @@ public class PromptTemplate {
               Provide the summary as plain text suitable for support agents and future reference
         """;
 
-    public static String TITLE_GENERATION_PROMPT_TEMPLATE = """
+    public static final String TITLE_GENERATION_PROMPT = """
             You are a helpful assistant.Generate a concise and descriptive title
             for the following conversation summary.
             
@@ -61,6 +61,17 @@ public class PromptTemplate {
             Now generate title for the summary
             %s
              
+            """;
+
+    public static final String EMAIL_NOTIFICATION_PROMPT = """
+            You are helpful customer support assistant,
+            Generate a message to inform to customer that the ticket has been created for their issue and complaint.
+            Keep the message clean,clear and warm.
+            For example :
+            "Thanks for waiting.we have sent an email with the details of your tickets to further process your request.
+            Please check in your email.junk box,spam in case if you can't see it in your inbox,Have a nice day.
+            
+            Now a generate a message to inform the user 
             """;
 }
 
