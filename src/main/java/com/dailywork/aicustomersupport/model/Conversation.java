@@ -16,7 +16,7 @@ public class Conversation {
     private String conversationSummary;
     private boolean ticketCreated;
     @ManyToOne
-    private Customer user;
+    private Customer customer;
     @OneToOne(mappedBy = "conversation")
     private Ticket ticket;
 }

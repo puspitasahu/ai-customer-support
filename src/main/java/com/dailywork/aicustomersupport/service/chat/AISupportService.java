@@ -60,4 +60,38 @@ public class AISupportService {
         }).subscribeOn(Schedulers.boundedElastic());
 
     }
+
+    public Mono<String> summarizeCustomerConversationMessage(String userConversation){
+        List<Message> messages= new ArrayList<>();
+        messages.add(new SystemMessage(PromptTemplate.CUSTOMER_CONVERSATION_SUMMARY_REPORT));
+        messages.add(new UserMessage(userConversation));
+        return Mono.fromCallable(()->{
+            ChatClient.CallResponseSpec responseSpec = chatClient.prompt()
+                    .messages(messages)
+                    .call();
+            String content = responseSpec.content();
+            if(content == null){
+                throw new IllegalStateException("AI response content is null");
+            }
+            return content;
+        }).subscribeOn(Schedulers.boundedElastic());
+
+    }
+
+    public Mono<String> conversationTitle(String summarizeConversation){
+        List<Message> messages= new ArrayList<>();
+        messages.add(new SystemMessage(PromptTemplate.TITLE_GENERATION_PROMPT_TEMPLATE));
+        messages.add(new UserMessage(summarizeConversation));
+        return Mono.fromCallable(()->{
+            ChatClient.CallResponseSpec responseSpec = chatClient.prompt()
+                    .messages(messages)
+                    .call();
+            String content = responseSpec.content();
+            if(content == null){
+                throw new IllegalStateException("AI response content is null");
+            }
+            return content;
+        }).subscribeOn(Schedulers.boundedElastic());
+
+    }
 }

@@ -34,4 +34,35 @@ public class PromptTemplate {
             Now generate tyour own message to the customer.              
             
             """;
+
+    public static String CUSTOMER_CONVERSATION_SUMMARY_REPORT = """
+        Summarize the following customer information in clear,concise and informative manner,
+        highlighting the main points,questions and concerns expressed by customers
+        Focus on:
+            - Customers'questions and concerns
+            -Important context or background information
+            -Any specific requests or issues mentioned
+            -  Don't include any phone personal contact information such as email address or phone number in the summary
+              Provide the summary as plain text suitable for support agents and future reference
+        """;
+
+    public static String TITLE_GENERATION_PROMPT_TEMPLATE = """
+            You are a helpful assistant.Generate a concise and descriptive title
+            for the following conversation summary.
+            
+            The title should be 3 to 7 words long,focus on the main issue or request,
+            and avoid generic team like "Ticket Confirmation","Next Steps" etc.
+            
+            Example of good Titles:
+            -Laptop Battery not charging
+            -Refund Request for Defective Phone
+            -Account Password Reset Issue
+            
+            Now generate title for the summary
+            %s
+             
+            """;
 }
+
+
+

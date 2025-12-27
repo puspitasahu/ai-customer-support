@@ -17,6 +17,7 @@ public class Ticket {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String referenceNumber;
+    private Long productOrderNumber;
     private String resolutionDetails;
     @Enumerated(EnumType.STRING)
     private TicketStatus ticketStatus;
