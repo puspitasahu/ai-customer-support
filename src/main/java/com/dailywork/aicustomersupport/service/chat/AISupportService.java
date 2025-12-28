@@ -22,7 +22,7 @@ public class AISupportService {
     private final  ChatClient chatClient;
     public Mono<String> chatWithHistory(List<ChatEntry>history){
         List<Message> messages= new ArrayList<>();
-        messages.add(new SystemMessage(PromptTemplate.SUPPORT_PROMPT));
+        messages.add(new SystemMessage(PromptTemplate.AI_SUPPORT_PROMPT));
         for(ChatEntry entry:history){
             String content= entry.getContent();
             String role = entry.getRole();

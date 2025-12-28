@@ -12,7 +12,7 @@ public class Conversation {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String conversationTitle;
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String conversationSummary;
     private boolean ticketCreated;
     @ManyToOne

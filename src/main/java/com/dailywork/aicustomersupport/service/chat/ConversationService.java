@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -89,6 +90,7 @@ public class ConversationService implements IConversationService {
 
     private Ticket finalizeConversationAndCreateTicket(String sessionId){
         List<ChatEntry> history = activeConversation.get(sessionId);
+        log.info("The conversation history : {}",history);
         Customer customer = getCustomerInformation(history);
         log.info("This is customer information :{}",customer);
         if(customer==null){
@@ -110,8 +112,16 @@ public class ConversationService implements IConversationService {
 
             List<ChatEntry> userConversation = history.stream().filter(entry->"user".equalsIgnoreCase(entry.getRole()))
                     .toList();
-            String conversationSummary = aiSupportService.summarizeCustomerConversationMessage(userConversation.toString()).block();
+
+            String formattedConversation = userConversation.stream()
+                    .map(ChatEntry::getContent)  // Get just the content
+                    .collect(Collectors.joining("\n"));
+         //   String conversationSummary = aiSupportService.summarizeCustomerConversationMessage(userConversation.toString()).block();
+            String conversationSummary = aiSupportService.summarizeCustomerConversationMessage(formattedConversation.toString()).block();
+            log.info("The conversation history {}", conversationSummary);
+
             String conversationTitle = aiSupportService.conversationTitle(conversationSummary).block();
+            log.info("ConversationTitle :{}",conversationTitle);
 
             conversation.setConversationTitle(conversationTitle!=null ? conversationTitle.trim() : "UnTitled Conversation" );
             conversation.setConversationSummary(conversationSummary);

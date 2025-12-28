@@ -18,7 +18,8 @@ import java.util.List;
         private String fullName;
         private String emailAddress;
         private String phoneNumber;
-        @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
+        @OneToMany(mappedBy="customer",fetch=FetchType.LAZY)
+        @ToString.Exclude
         private List<Conversation> conversation;
 
 }

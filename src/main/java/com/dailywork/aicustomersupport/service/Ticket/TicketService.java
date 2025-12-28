@@ -20,7 +20,7 @@ import java.util.random.RandomGenerator;
 public class TicketService implements ITicketService{
     private final TicketRepository ticketRepository;
     private final ObjectMapper objectMapper;
-    private final ITicketService iTicketService;
+
 
     @Override
     public Ticket createTicketForConversation(Conversation conversation) {
@@ -29,7 +29,7 @@ public class TicketService implements ITicketService{
         ticket.setTicketStatus(TicketStatus.OPENED);
         ticket.setResolvedAt(null);
         ticket.setCreatedAt(LocalDateTime.now());
-        ticket.setReferenceNumber(generateRandomAlphaNumeric(20));
+        ticket.setReferenceNumber(generateRandomAlphaNumeric(10));
         return ticketRepository.save(ticket);
     }
 
@@ -60,6 +60,6 @@ public class TicketService implements ITicketService{
                 .filteredBy(Character::isLetterOrDigit)
                 .get();
 
-        return generator.generate(length);
+        return generator.generate(length).toUpperCase();
     }
 }
