@@ -79,7 +79,8 @@ public class PromptTemplate {
             - Any relevant background inforation that impacts the problem
             -The exact request or actions that the customer wants.
             -what the customer expect the next steps
-            Exclude any personal or senistive information
+            - Always include order number in the summary if available.
+            Exclude any personal or senisitive information
             -  Don't include any phone personal contact information such as email address or phone number in the summary
               The summary should be easy to read and immediate useful for Agents,
         """;
