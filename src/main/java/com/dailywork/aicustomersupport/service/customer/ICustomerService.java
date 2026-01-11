@@ -7,8 +7,8 @@ import java.util.List;
 public interface ICustomerService{
     Customer createCustomer(Customer customer);
     Customer getCustomerById(Long id);
-    Customer getCustomerByEmail(String emails,String phoneNumber);
-    List<Customer> getCustomers();
+    Customer getCustomerByEmail(String emails);
+    List<Customer> getAllCustomers();
     Customer updateCustomer(Long id,Customer updateCustomer);
     void deleteCustomer();
 

@@ -26,13 +26,13 @@ public class CustomerService implements ICustomerService{
     }
 
     @Override
-    public Customer getCustomerByEmail(final String emails, final String phoneNumber){
-        return customerRepository.findByEmailAddressAndPhoneNumber(emails,phoneNumber)
+    public Customer getCustomerByEmail(final String emails){
+        return customerRepository.findByEmailAddress(emails)
                 .orElseThrow(()->new EntityNotFoundException("Customer Not Found"));
     }
 
     @Override
-    public List<Customer> getCustomers(){
+    public List<Customer> getAllCustomers(){
         return List.of();
     }
 

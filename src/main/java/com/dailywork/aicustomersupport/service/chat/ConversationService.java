@@ -2,6 +2,7 @@ package com.dailywork.aicustomersupport.service.chat;
 
 import com.dailywork.aicustomersupport.dtos.ChatEntry;
 import com.dailywork.aicustomersupport.dtos.ChatMessageDto;
+import com.dailywork.aicustomersupport.event.TicketCreationEvent;
 import com.dailywork.aicustomersupport.helper.CustomerInfo;
 import com.dailywork.aicustomersupport.helper.CustomerInfoHelper;
 import com.dailywork.aicustomersupport.model.Conversation;
@@ -13,6 +14,7 @@ import com.dailywork.aicustomersupport.service.Ticket.ITicketService;
 import com.dailywork.aicustomersupport.websocket.WebSocketMessageSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,6 +29,7 @@ public class ConversationService implements IConversationService {
     private final AISupportService aiSupportService;
     private final UserRepository userRepository;
     private final WebSocketMessageSender webSocketMessageSender;
+    private final ApplicationEventPublisher publisher;
     private final ConversationRepository conversationRepository;
     private final ITicketService iTicketService;
     private Map<String, List<ChatEntry>> activeConversation = new ConcurrentHashMap<>();
@@ -64,7 +67,7 @@ public class ConversationService implements IConversationService {
                         String feedbackMessage = aiSupportService.generateEmailNotificationMessage().block();
                         if(feedbackMessage !=null){
                             List<ChatEntry> currentHistory = activeConversation.get(sessionId);
-                            if(currentHistory == null){
+                            if(currentHistory != null){
                                 currentHistory.add(new ChatEntry("assistant",feedbackMessage));
                             }
                             webSocketMessageSender.sendMessageToUser(sessionId,feedbackMessage);
@@ -128,16 +131,17 @@ public class ConversationService implements IConversationService {
 
             Conversation saveConversation = conversationRepository.save(conversation);
 
-            Ticket savedticket = iTicketService.createTicketForConversation(conversation);
+            Ticket savedTicket = iTicketService.createTicketForConversation(conversation);
             saveConversation.setTicketCreated(true);
-            saveConversation.setTicket(savedticket);
+            saveConversation.setTicket(savedTicket);
             conversationRepository.save(saveConversation);
 
             //send email notification to the customer
+            publisher.publishEvent(new TicketCreationEvent(savedTicket));
             //remove thr conversation from memory
             activeConversation.remove(sessionId);
 
-            return savedticket;
+            return savedTicket;
 
         }catch(Exception e){
             String errorMsg="Error occurred during conversation creation" + e.getMessage();

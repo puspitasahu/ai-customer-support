@@ -2,6 +2,7 @@ package com.dailywork.aicustomersupport.email;
 
 import com.dailywork.aicustomersupport.model.Customer;
 import com.dailywork.aicustomersupport.model.Ticket;
+import com.dailywork.aicustomersupport.service.customer.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,11 +12,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailNotificationService {
     private  final EmailService emailService;
+    private final CustomerService customerService;
 
     public void sendTicketNotificationEmail(Ticket ticket) {
-        Customer customer =null;
-        String customerName = null;
-        String customerEmail = null;
+        Customer customer =customerService.getCustomerByEmail(ticket.getConversation().getCustomer().getEmailAddress());
+        String customerName = customer.getFullName();
+        String customerEmail = customer.getEmailAddress();
         String senderName="Customer Support Service";
         String subject="Support Ticket Created";
         String body=getHtmlBody(ticket,customerName ,senderName);
