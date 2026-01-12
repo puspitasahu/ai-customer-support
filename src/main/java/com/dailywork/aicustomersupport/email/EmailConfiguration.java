@@ -18,9 +18,11 @@ public class EmailConfiguration {
         mailSender.setPort(DEFAULT_PORT);
         mailSender.setUsername(DEFAULT_SENDER);
         mailSender.setPassword(DEFAULT_PASSWORD);
-        Properties prop =mailSender.getJavaMailProperties();
-        prop.put("mail.smtp.auth",DEFAULT_AUTH);
-        prop.put("mail.smtp.starttls.enable",DEFAULT_STARTTLS);
+        Properties props =mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth",DEFAULT_AUTH);
+        props.put("mail.smtp.starttls.enable",DEFAULT_STARTTLS);
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
         return mailSender;
     }
 }

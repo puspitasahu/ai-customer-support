@@ -32,14 +32,14 @@ public class ConversationService implements IConversationService {
     private final ApplicationEventPublisher publisher;
     private final ConversationRepository conversationRepository;
     private final ITicketService iTicketService;
-    private Map<String, List<ChatEntry>> activeConversation = new ConcurrentHashMap<>();
+    private Map<String, List<ChatEntry>> activeConversations = new ConcurrentHashMap<>();
     public String handleMessage(ChatMessageDto chatMessage) {
         String sessionId = chatMessage.getSessionId();
         String message = chatMessage.getMessage()!=null ?chatMessage.getMessage().trim():"";
         log.info("The Session Id is {}",sessionId);
         log.info("The Messgae content is{}", message);
 
-        List<ChatEntry> history = activeConversation.computeIfAbsent(sessionId,k-> Collections.synchronizedList(new ArrayList<>()));
+        List<ChatEntry> history = activeConversations.computeIfAbsent(sessionId, k-> Collections.synchronizedList(new ArrayList<>()));
         history.add(new ChatEntry("user", message));
 
         String aiResponseText;
@@ -51,6 +51,7 @@ public class ConversationService implements IConversationService {
         if(aiResponseText ==null){
             return "";
         }
+        log.info("aiResponseText :: {}",aiResponseText);
 
         if(aiResponseText.contains("TICKET_CREATION_READY")){
             try{
@@ -65,17 +66,23 @@ public class ConversationService implements IConversationService {
                         }
                         //Ask AI to generate report and send email to customer
                         String feedbackMessage = aiSupportService.generateEmailNotificationMessage().block();
-                        if(feedbackMessage !=null){
-                            List<ChatEntry> currentHistory = activeConversation.get(sessionId);
-                            if(currentHistory != null){
-                                currentHistory.add(new ChatEntry("assistant",feedbackMessage));
-                            }
-                            webSocketMessageSender.sendMessageToUser(sessionId,feedbackMessage);
+                        log.info("Here is the email feedback message: {}", feedbackMessage);
+                        if (feedbackMessage == null) {
+                            log.warn("Feedback message is null, not sending WebSocket message");
+                            return;
                         }
-                    }catch(Exception e){
-                        //log any error
-                    }
 
+                        List<ChatEntry> currentHistory = activeConversations.get(sessionId);
+                        if (currentHistory != null) {
+                            currentHistory.add(new ChatEntry("assistant", feedbackMessage));
+                        }
+
+                        log.info("Sending WebSocket message to user {}", sessionId);
+                        webSocketMessageSender.sendMessageToUser(sessionId, feedbackMessage);
+
+                    } catch (Exception e) {
+                        log.error("Error in async ticket creation and notification", e);
+                    }
                 });
 
                 //log.info("Confirmed Ticket : {}",tempTicket);
@@ -92,7 +99,7 @@ public class ConversationService implements IConversationService {
     }
 
     private Ticket finalizeConversationAndCreateTicket(String sessionId){
-        List<ChatEntry> history = activeConversation.get(sessionId);
+        List<ChatEntry> history = activeConversations.get(sessionId);
         log.info("The conversation history : {}",history);
         Customer customer = getCustomerInformation(history);
         log.info("This is customer information :{}",customer);
@@ -139,7 +146,7 @@ public class ConversationService implements IConversationService {
             //send email notification to the customer
             publisher.publishEvent(new TicketCreationEvent(savedTicket));
             //remove thr conversation from memory
-            activeConversation.remove(sessionId);
+            activeConversations.remove(sessionId);
 
             return savedTicket;
 
