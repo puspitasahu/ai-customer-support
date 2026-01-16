@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Customer Support Service</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333333;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        img {
+            border: 0;
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+
+        /* Container */
+        .email-container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header */
+        .email-header {
+            background-color: rgba(78, 175, 231, 0.93);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .email-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Body */
+        .email-body {
+            padding: 30px 30px 40px 30px;
+            font-size: 16px;
+            line-height: 1.5;
+            background-color: #f4f6f8;
+        }
+
+        .email-body p {
+            margin: 0 0 15px 0;
+        }
+
+        .email-body strong {
+            color: #3e5a7e;
+        }
+
+        /* Call to action button */
+        .btn {
+            display: inline-block;
+            background-color: rgba(78, 175, 231, 0.93);
+            color: white !important;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Footer */
+        .email-footer {
+            background-color: #f4f6f8;
+            color: #888888;
+            font-size: 12px;
+            text-align: center;
+            padding: 15px 20px;
+        }
+
+        /* Responsive */
+        @media only screen and (max-width: 620px) {
+            .email-container {
+                width: 100% !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+
+            .email-body {
+                padding: 20px !important;
+            }
+
+            .btn {
+                width: 100% !important;
+                box-sizing: border-box;
+            }
+        }
+    </style>
+</head>
+<body>
+<table role="presentation"
+       class="email-container" cellpadding="0"
+       cellspacing="0" width="700" align="center">
+    <tr>
+        <td class="email-header">
+            <h1>Customer Support Service</h1>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <!-- Header image -->
+            <img src="https://plus.unsplash.com/premium_photo-1661405483257-346e32365aa6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                 alt="Support Team"/>
+        </td>
+    </tr>
+    <tr>
+        <td class="email-body">
+            <p>Hi <strong>{{customerName}}</strong>,</p>
+            <p>Thank you for reaching out to our support team. We have successfully created a new
+                support ticket for your complaint with information shown below:</p>
+            <blockquote style="border-left: 4px solid #3e5a7e;
+             padding: 15px;
+              color: #555555;
+              background-color: #ffffff;
+              margin: 40px;
+               font-style: italic;">
+                <p><strong>Email Address : </strong> {{customerEmail}},</p>
+                <p><strong>Phone Number : </strong> {{customerPhone}},</p>
+                <p><strong>Reference Number : </strong> {{ticketReferenceNumber}},</p>
+                <p><strong>Complaint Summary : </strong> {{ticketTitle}},</p>
+                <hr/>
+                Complaint Details: <br/>
+                {{ticketDetails}}
+            </blockquote>
+            <p>Our support agents will review your issue and get back to you as soon as possible.</p>
+            <p>If you have any additional information or questions, feel free to reply to this email.</p>
+            <h3>Customer Support Service Team</h3>
+            <a href="mailto:support@yourcompany.com" class="btn">Contact Support</a>
+        </td>
+    </tr>
+    <tr>
+        <td class="email-footer">
+            <p>&copy;
+                <script>document.write(String( new Date().getFullYear()));</script>
+                AI Customer Support Service. All rights reserved.
+            </p>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
