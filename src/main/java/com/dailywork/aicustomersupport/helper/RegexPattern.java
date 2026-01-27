@@ -9,4 +9,7 @@ public class RegexPattern {
     public static final Pattern PHONE_PATTERN=Pattern.compile(
             "(\\+\\d{1,3}[\\s-]?\\d{6,12})"
     );
+    public static final Pattern ORDER_PATTERN= Pattern.compile(
+            "\\+?\\d{1,4}?[-.\\s]?\\(?\\d{1,3}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}"
+    );
 }
