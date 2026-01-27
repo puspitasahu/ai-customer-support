@@ -9,6 +9,7 @@ import com.dailywork.aicustomersupport.model.Conversation;
 import com.dailywork.aicustomersupport.model.Ticket;
 import com.dailywork.aicustomersupport.model.Customer;
 import com.dailywork.aicustomersupport.repository.ConversationRepository;
+import com.dailywork.aicustomersupport.repository.TicketRepository;
 import com.dailywork.aicustomersupport.repository.UserRepository;
 import com.dailywork.aicustomersupport.service.Ticket.ITicketService;
 import com.dailywork.aicustomersupport.websocket.WebSocketMessageSender;
@@ -32,6 +33,7 @@ public class ConversationService implements IConversationService {
     private final ApplicationEventPublisher publisher;
     private final ConversationRepository conversationRepository;
     private final ITicketService iTicketService;
+    private final TicketRepository ticketRepository;
     private Map<String, List<ChatEntry>> activeConversations = new ConcurrentHashMap<>();
     public String handleMessage(ChatMessageDto chatMessage) {
         String sessionId = chatMessage.getSessionId();
@@ -138,7 +140,18 @@ public class ConversationService implements IConversationService {
 
             Conversation saveConversation = conversationRepository.save(conversation);
 
-            Ticket savedTicket = iTicketService.createTicketForConversation(conversation);
+            Ticket ticket = iTicketService.createTicketForConversation(conversation);
+
+            CustomerInfo customerInfo = getCustomerInfo(history);
+
+            if(customerInfo.orderNumber()!=null){
+                ticket.setProductOrderNumber(customerInfo.orderNumber());
+            }else{
+                ticket.setProductOrderNumber(null);
+            }
+
+            Ticket savedTicket = ticketRepository.save(ticket);
+
             saveConversation.setTicketCreated(true);
             saveConversation.setTicket(savedTicket);
             conversationRepository.save(saveConversation);
@@ -177,5 +190,10 @@ public class ConversationService implements IConversationService {
         Customer customer= userRepository.findByEmailAddressAndPhoneNumber(customerInfo.emailAddress(),customerInfo.phoneNumber());
         return customer;
 
+    }
+
+    private static CustomerInfo getCustomerInfo(List<ChatEntry> history){
+        CustomerInfo customerInfo = CustomerInfoHelper.extractUserInformationChatHistory(history);
+        return customerInfo;
     }
 }

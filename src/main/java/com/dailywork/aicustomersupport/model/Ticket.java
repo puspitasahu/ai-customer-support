@@ -19,7 +19,7 @@ public class Ticket {
     @Column(name="Ref_Number")
     private String referenceNumber;
     @Column(name="PO_Number")
-    private Long productOrderNumber;
+    private String productOrderNumber;
     private String resolutionDetails;
     @Enumerated(EnumType.STRING)
     private TicketStatus ticketStatus;

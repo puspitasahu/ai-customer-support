@@ -30,7 +30,7 @@ public class TicketService implements ITicketService{
         ticket.setResolvedAt(null);
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setReferenceNumber(generateRandomAlphaNumeric(10));
-        return ticketRepository.save(ticket);
+        return ticket;
     }
 
     @Override

@@ -14,10 +14,11 @@ import java.util.regex.Matcher;
 public class CustomerInfoHelper {
     String emailAddress;
     String phoneNumber;
+    String orderNumber;
 
     public static CustomerInfo extractUserInformationChatHistory(List<ChatEntry> history){
         if(history==null || history.isEmpty()){
-            return(new CustomerInfo(null,null));
+            return(new CustomerInfo(null,null,null));
         }
 
         Optional<String> emailAddress = history.stream()
@@ -38,7 +39,17 @@ public class CustomerInfoHelper {
                 .map(Optional::get)
                 .findFirst();
 
-        return new CustomerInfo(emailAddress.orElse(null),phoneNumber.orElse(null));
+        Optional<String> orderNumber = history.stream()
+                .filter(entry->"user".equalsIgnoreCase(entry.getRole()))
+                .map(ChatEntry::getContent)
+                .filter(content -> content!=null && !content.isEmpty())
+                .map(CustomerInfoHelper::extractOrderNumber)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
+
+
+        return new CustomerInfo(emailAddress.orElse(null),phoneNumber.orElse(null),orderNumber.orElse(null));
 
 
     }
@@ -58,6 +69,15 @@ public class CustomerInfoHelper {
                 .flatMap(t->{
                     Matcher matcher= RegexPattern.PHONE_PATTERN.matcher(t);
                     return matcher.find()?Optional.of(matcher.group(1)) :Optional.empty();
+                });
+    }
+
+    private static Optional<String> extractOrderNumber(String orderNumber){
+        return Optional.ofNullable(orderNumber)
+                .filter(s->!s.isEmpty())
+                .flatMap(t->{
+                    Matcher matcher = RegexPattern.ORDER_PATTERN.matcher(t);
+                    return matcher.find()?Optional.of(matcher.group(1)):Optional.empty();
                 });
     }
 }
