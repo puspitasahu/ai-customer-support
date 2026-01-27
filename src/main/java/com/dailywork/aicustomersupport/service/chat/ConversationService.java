@@ -65,22 +65,20 @@ public class ConversationService implements IConversationService {
                         Ticket  tempTicket = finalizeConversationAndCreateTicket(sessionId);
                         if(tempTicket !=null){
                             history.add(new ChatEntry("system","The email has been sent to user"));
+
+                            String feedbackMessage = aiSupportService.generateEmailNotificationMessage().block();
+                            if(feedbackMessage!=null){
+                                List<ChatEntry> currentHistory = activeConversations.get(sessionId);
+                                if(currentHistory!=null){
+                                    currentHistory.add(new ChatEntry("assistant",feedbackMessage));
+                                }
+                                webSocketMessageSender.sendMessageToUser(sessionId, feedbackMessage);
+                            }
                         }
                         //Ask AI to generate report and send email to customer
-                        String feedbackMessage = aiSupportService.generateEmailNotificationMessage().block();
-                        log.info("Here is the email feedback message: {}", feedbackMessage);
-                        if (feedbackMessage == null) {
-                            log.warn("Feedback message is null, not sending WebSocket message");
-                            return;
-                        }
 
-                        List<ChatEntry> currentHistory = activeConversations.get(sessionId);
-                        if (currentHistory != null) {
-                            currentHistory.add(new ChatEntry("assistant", feedbackMessage));
-                        }
 
-                        log.info("Sending WebSocket message to user {}", sessionId);
-                        webSocketMessageSender.sendMessageToUser(sessionId, feedbackMessage);
+
 
                     } catch (Exception e) {
                         log.error("Error in async ticket creation and notification", e);
