@@ -5,6 +5,7 @@ import com.dailywork.aicustomersupport.dtos.ChatMessageDto;
 import com.dailywork.aicustomersupport.event.TicketCreationEvent;
 import com.dailywork.aicustomersupport.helper.CustomerInfo;
 import com.dailywork.aicustomersupport.helper.CustomerInfoHelper;
+import com.dailywork.aicustomersupport.helper.RegexPattern;
 import com.dailywork.aicustomersupport.model.Conversation;
 import com.dailywork.aicustomersupport.model.Ticket;
 import com.dailywork.aicustomersupport.model.Customer;
@@ -21,7 +22,9 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +38,9 @@ public class ConversationService implements IConversationService {
     private final ITicketService iTicketService;
     private final TicketRepository ticketRepository;
     private Map<String, List<ChatEntry>> activeConversations = new ConcurrentHashMap<>();
+
+    //This will handle case when user enters wrong contact information
+    private Map<String,Boolean> waitingForContactCorrection = new ConcurrentHashMap<>();
     public String handleMessage(ChatMessageDto chatMessage) {
         String sessionId = chatMessage.getSessionId();
         String message = chatMessage.getMessage()!=null ?chatMessage.getMessage().trim():"";
@@ -112,9 +118,11 @@ public class ConversationService implements IConversationService {
             if(history!=null){
                 history.add(new ChatEntry("system",errorMessage));
             }
+            waitingForContactCorrection.put(sessionId,true);
             //set up flag and wait for customer information correction
             return  null;
         }
+        waitingForContactCorrection.remove(sessionId);
 
         Conversation  conversation =  getConversation( customer);
 
@@ -193,5 +201,33 @@ public class ConversationService implements IConversationService {
     private static CustomerInfo getCustomerInfo(List<ChatEntry> history){
         CustomerInfo customerInfo = CustomerInfoHelper.extractUserInformationChatHistory(history);
         return customerInfo;
+    }
+
+    private void replaceOldContactInformationHistory(List<ChatEntry> history, String emailAddress,String phone){
+        if(history == null || history.isEmpty()){
+            return;
+        }
+
+        createCustomerInformation( history,emailAddress, RegexPattern.EMAIl_PATTERN);
+        createCustomerInformation(history,phone,RegexPattern.PHONE_PATTERN);
+
+    }
+
+    private void createCustomerInformation(List<ChatEntry> history, String newContact, Pattern pattern){
+
+        if(history == null || history.isEmpty()){
+            return;
+        }
+        OptionalInt indexOpt = IntStream.range(0, history.size())
+                .filter(i->"user".equalsIgnoreCase(history.get(i).getRole())
+                && pattern.matcher(history.get(i).getContent())
+                        .find())
+                .findFirst();
+
+        indexOpt.ifPresentOrElse(
+                idx-> history.set(idx,new ChatEntry("user",newContact)),
+                (()->history.add(new ChatEntry("user",newContact)))
+        );
+
     }
 }
